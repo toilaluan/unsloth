@@ -186,7 +186,10 @@ def MistralForCausalLM_fast_forward(
 ) -> Union[Tuple, CausalLMOutputWithPast]:
 
     if causal_mask is None and past_key_values is None:
-        bsz, q_len = input_ids.shape
+        if input_ids:
+            bsz, q_len = input_ids.shape
+        else:
+            bsz, q_len = inputs_embeds.shape[:2]
         sliding_window = getattr(self.config, "sliding_window", None)
         if sliding_window is None or sliding_window == "null" or sliding_window <= 0:
             causal_mask = xformers.attn_bias.LowerTriangularMask()
